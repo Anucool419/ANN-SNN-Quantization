@@ -50,18 +50,41 @@ def main():
             state_dict[k[:-2]+'thresh'] = state_dict.pop(k)
 
     model.load_state_dict(state_dict)
+    # for name, param in model.named_parameters():
+    #     print(f"{name}: mean={param.data.mean():.4f}, std={param.data.std():.4f}")
+        
+
+    print("\n Analyzing modules for quantization...\n")
+    for name, module in model.named_modules():
+        if hasattr(module, "weight"):
+            print(f"[QUANTIZABLE] {name}: {type(module)} → weight shape: {module.weight.shape}")
+        elif "IF" in str(type(module)) or "Spike" in str(type(module)) or "Neuron" in str(type(module)):
+            print(f"[SPIKING NEURON] {name}: {type(module)}")
+
+
 
     model.to(device)
 
     model.set_T(args.time)
     model.set_L(8)
+    
+    from main import evaluate_channel_quantization  # Adjust import if needed
+    top1, top5 = evaluate_channel_quantization(model, test_loader, quant_layers=(nn.Conv2d, nn.Linear))
+    print(f"Final Quantized Accuracy: Top-1 = {top1:.2f}%, Top-5 = {top5:.2f}%")
+
+
+    # # ADD QUANTIZATION HERE
+    # from .main import evaluate_channel_quantization
+    # evaluate_channel_quantization(model, test_loader, quant_layers=(nn.Conv2d, nn.Linear))
+
 
     # for m in model.modules():
     #     if isinstance(m, IF):
     #         print(m.thresh)
 
     acc = val(model, test_loader, device, args.time)
-    print(acc)
+    print(f"Validation Accuracy after quantization: {acc}")
+    #print(acc)
 
 
 

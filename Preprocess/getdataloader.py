@@ -3,10 +3,10 @@ from torchvision import datasets, transforms
 from torch.utils.data import DataLoader
 import torch
 import os
-from preprocess.augment import Cutout, CIFAR10Policy
+from Preprocess.augment import Cutout, CIFAR10Policy
 
 # your own data dir
-DIR = {'CIFAR10': '~/datasets', 'CIFAR100': '~/datasets', 'ImageNet': 'YOUR_IMAGENET_DIR'}
+DIR = {'CIFAR10': '~/datasets', 'CIFAR100': '~/datasets', 'ImageNet': '/home/gopalks/scripts/anu/ANN_SNN_QCFS/tiny-imagenet-200'}
 
 def GetCifar10(batchsize, attack=False):
     trans_t = transforms.Compose([transforms.RandomCrop(32, padding=4),
@@ -56,10 +56,13 @@ def GetImageNet(batchsize):
                             ])
 
     train_data = datasets.ImageFolder(root=os.path.join(DIR['ImageNet'], 'train'), transform=trans_t)
-    train_sampler = torch.utils.data.distributed.DistributedSampler(train_data)
-    train_dataloader =DataLoader(train_data, batch_size=batchsize, shuffle=False, num_workers=8, sampler=train_sampler, pin_memory=True)
+    #train_sampler = torch.utils.data.distributed.DistributedSampler(train_data)
+    #train_dataloader =DataLoader(train_data, batch_size=batchsize, shuffle=False, num_workers=8, sampler=train_sampler, pin_memory=True)
+    train_dataloader = DataLoader(train_data, batch_size=batchsize, shuffle=True, num_workers=8, pin_memory=True)
 
-    test_data = datasets.ImageFolder(root=os.path.join(DIR['ImageNet'], 'val'), transform=trans)
-    test_sampler = torch.utils.data.distributed.DistributedSampler(test_data)
-    test_dataloader = DataLoader(test_data, batch_size=batchsize, shuffle=False, num_workers=2, sampler=test_sampler) 
+
+    test_data = datasets.ImageFolder(root=os.path.join(DIR['ImageNet'], 'val_split'), transform=trans)
+    #test_sampler = torch.utils.data.distributed.DistributedSampler(test_data)
+    #test_dataloader = DataLoader(test_data, batch_size=batchsize, shuffle=False, num_workers=2, sampler=test_sampler)
+    test_dataloader = DataLoader(test_data, batch_size=batchsize, shuffle=False, num_workers=2)
     return train_dataloader, test_dataloader

@@ -5,8 +5,8 @@ import warnings
 import torch.nn as nn
 import torch.nn.parallel
 import torch.optim
-from models import modelpool
-from preprocess import datapool
+from Models import modelpool
+from Preprocess import datapool
 from utils import train, val, seed_all, get_logger
 
 parser = argparse.ArgumentParser(description='PyTorch Training')
@@ -20,6 +20,7 @@ parser.add_argument('-T', '--time', default=0, type=int, help='snn simulation ti
 # model configuration
 parser.add_argument('-data', '--dataset',default='cifar100',type=str,help='dataset')
 parser.add_argument('-arch','--model',default='vgg16',type=str,help='model')
+parser.add_argument('-id', '--identifier', default='', type=str, help='Custom identifier for saving the model checkpoint')
 
 # training configuration
 parser.add_argument('--epochs',default=300,type=int,metavar='N',help='number of total epochs to run')

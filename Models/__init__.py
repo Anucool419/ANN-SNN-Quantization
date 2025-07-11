@@ -19,6 +19,13 @@ def modelpool(MODELNAME, DATANAME):
         return resnet34(num_classes=num_classes)
     elif MODELNAME.lower() == 'resnet20':
         return resnet20(num_classes=num_classes)
+    elif MODELNAME.lower() == 'resnet50':
+        return resnet50(num_classes=num_classes)
+    elif MODELNAME.lower() == 'vgg11':
+        return VGG('VGG11',num_classes=num_classes,dropout=0.5)
+    elif MODELNAME.lower() == 'vgg13':
+        return VGG('VGG13',num_classes=num_classes,dropout=0.5)
+
     else:
         print("still not support this model")
         exit(0)
